@@ -4974,11 +4974,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Demon\\Documents\\prueba\\EventsApi\\EventsApi.csproj",
+      "projectUniqueName": "c:\\Users\\Demon\\Documents\\EventsApp\\EventsApi\\EventsApi.csproj",
       "projectName": "EventsApi",
-      "projectPath": "C:\\Users\\Demon\\Documents\\prueba\\EventsApi\\EventsApi.csproj",
+      "projectPath": "c:\\Users\\Demon\\Documents\\EventsApp\\EventsApi\\EventsApi.csproj",
       "packagesPath": "C:\\Users\\Demon\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Demon\\Documents\\prueba\\EventsApi\\obj\\",
+      "outputPath": "c:\\Users\\Demon\\Documents\\EventsApp\\EventsApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Demon\\AppData\\Roaming\\NuGet\\NuGet.Config"

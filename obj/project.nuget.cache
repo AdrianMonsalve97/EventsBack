@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "s6e2wjDDAX0=",
+  "dgSpecHash": "8iHD/poEiHI=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Demon\\Documents\\prueba\\EventsApi\\EventsApi.csproj",
+  "projectFilePath": "c:\\Users\\Demon\\Documents\\EventsApp\\EventsApi\\EventsApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Demon\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Demon\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
