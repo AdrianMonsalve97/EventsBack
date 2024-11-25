@@ -8,35 +8,31 @@ using EventsApi.Services;
 using EventsApi.Helpers;
 using EventsApi.Repositorio;
 
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// Configurar DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionDevilServ")));
 
+// Configurar servicios
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddControllers();
-builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<EventoService>();
-builder.Services.AddScoped<IEventRepository, EventRepository>(); 
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IInscriptionRepository, InscripcionRepository>();
 builder.Services.AddScoped<InscripcionService>();
 builder.Services.AddScoped<UsuarioService>();
 
-
-
-
-
-
+// Configurar JwtTokenHelper como singleton
 builder.Services.AddSingleton<JwtTokenHelper>(provider =>
 {
     string secretKey = builder.Configuration["Jwt:Key"]!;
     return new JwtTokenHelper(secretKey);
 });
-// Configuracion de Swagger
+
+// Configuración de Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -63,10 +59,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-string base64Key = builder.Configuration["Jwt:Key"]!;
-byte[] keyBytes = Convert.FromBase64String(base64Key);
-Console.WriteLine($"Decoded Key: {BitConverter.ToString(keyBytes)}");
+// Configuración de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
+// Configuración de autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -129,11 +133,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Aplicar la política CORS global
+app.UseCors("AllowAll");
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-
 app.Run();
-
