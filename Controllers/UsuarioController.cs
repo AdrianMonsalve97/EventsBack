@@ -6,7 +6,6 @@ using Models.resgeneral;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class UsuarioController : ControllerBase
 {
     private readonly UsuarioService _usuarioService;
@@ -47,7 +46,6 @@ public class UsuarioController : ControllerBase
         // Obtener el ID y el rol del usuario desde el token
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         string? roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-
         if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
         {
             return Unauthorized(new
@@ -56,7 +54,6 @@ public class UsuarioController : ControllerBase
                 Mensaje = "El token no contiene un ID de usuario válido."
             });
         }
-
         // Validar permisos: solo el usuario o un administrador pueden actualizar
         if (userId != id && roleClaim != "Administrador")
         {

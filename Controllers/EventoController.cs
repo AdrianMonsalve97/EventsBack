@@ -6,6 +6,7 @@ using Models.resgeneral;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using EventsApi.Models.DTO;
 
 namespace EventsApi.Controllers
 {
@@ -24,18 +25,11 @@ namespace EventsApi.Controllers
         [HttpPost("filtrar")]
         public async Task<IActionResult> GetFilteredEvents([FromBody] EventoFiltroDto filtro)
         {
-            RespuestaGeneral<IEnumerable<Evento>> respuesta = await _eventService.GetFilteredEventsAsync(filtro);
-
-            if (respuesta.Error)
-            {
-                return BadRequest(respuesta);
-            }
-
+            IEnumerable<EventoDto> respuesta = await _eventService.GetFilteredEventsAsync(filtro);
             return Ok(respuesta);
         }
 
         [HttpPost("crearevento")]
-        [Authorize]
         public async Task<IActionResult> CreateEvent([FromBody] Evento evento)
         {
             // Validar modelo
@@ -62,30 +56,12 @@ namespace EventsApi.Controllers
 
             // Procesar la creación del evento
             RespuestaGeneral<object> respuesta = await _eventService.CreateEventAsync(evento, userId);
-
-            if (respuesta.Error)
-            {
-                return BadRequest(respuesta);
-            }
-
             return Ok(respuesta);
         }
 
         [HttpPut("actualizarevento/{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateEvent(int id, [FromBody] Evento updatedEvent)
         {
-            // Validar el modelo recibido
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new
-                {
-                    Error = true,
-                    Mensaje = "Datos del evento inválidos.",
-                    Detalles = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                });
-            }
-
             // Obtener el usuario desde el token
             string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
@@ -99,12 +75,6 @@ namespace EventsApi.Controllers
 
             // Llamar al servicio pasando el userId
             RespuestaGeneral<object> response = await _eventService.UpdateEventAsync(id, updatedEvent, userId);
-
-            if (response.Error)
-            {
-                return BadRequest(response);
-            }
-
             return Ok(response);
         }
 
@@ -115,17 +85,11 @@ namespace EventsApi.Controllers
             RespuestaGeneral<object> response = await _eventService.DeleteEventAsync(id);
             return Ok(response);
         }
-        [HttpGet("eventos-filtrados")]
-        public async Task<IActionResult> GetFilteredAvailableEvents([FromQuery] string? nombre, [FromQuery] string? ubicacion)
-        {
-            EventoFiltroDto filtro = new EventoFiltroDto
-            {
-                Nombre = nombre,
-                Ubicacion = ubicacion,
-                FechaHora = DateTime.Now
-            };
 
-            RespuestaGeneral<IEnumerable<Evento>> response = await _eventService.GetFilteredEventsAsync(filtro);
+        [HttpGet("eventos-filtrados")]
+        public async Task<IActionResult> GetFilteredAvailableEvents([FromQuery] EventoFiltroDto filtro)
+        {
+            IEnumerable<EventoDto> response = await _eventService.GetFilteredEventsAsync(filtro);
             return Ok(response);
         }
 
@@ -143,12 +107,7 @@ namespace EventsApi.Controllers
                 });
             }
 
-            return Ok(new
-            {
-                Error = false,
-                Mensaje = "Evento obtenido con éxito.",
-                Resultado = eventoDto
-            });
+            return Ok(eventoDto);
         }
     }
 }

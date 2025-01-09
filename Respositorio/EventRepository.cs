@@ -1,7 +1,10 @@
+using AutoMapper.QueryableExtensions;
 using EventsApi.Data;
 using EventsApi.Models;
+using EventsApi.Models.DTO;
 using EventsApi.Repositorio;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 public class EventRepository : GenericRepository<Evento>, IEventRepository
 {
@@ -32,7 +35,7 @@ public class EventRepository : GenericRepository<Evento>, IEventRepository
 
         if (filtro.CapacidadMaxima.HasValue && filtro.CapacidadMaxima > 0)
         {
-            query = query.Where(e => e.CapacidadMaxima >= filtro.CapacidadMaxima.Value);
+            query = query.Where(e => e.CapacidadMaxima == filtro.CapacidadMaxima.Value);
         }
 
         return query;
@@ -67,7 +70,10 @@ public class EventRepository : GenericRepository<Evento>, IEventRepository
     public async Task<IEnumerable<Evento>> GetFilteredEventsAsync(EventoFiltroDto filtro)
     {
         IQueryable<Evento> query = BuildQuery(filtro);
-        return await query.ToListAsync();
+        return await query
+            .Include(e => e.Inscripciones)
+            .ThenInclude(i => i.Usuario)
+            .ToListAsync();
     }
 
 
@@ -79,7 +85,7 @@ public class EventRepository : GenericRepository<Evento>, IEventRepository
     {
         return await _context.Eventos
             .Include(e => e.Inscripciones)
-                .ThenInclude(i => i.Usuario)
+            .ThenInclude(i => i.Usuario)
             .FirstOrDefaultAsync(e => e.Id == eventoId);
     }
 

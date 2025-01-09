@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using EventsApi.Models;
+using EventsApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.resgeneral;
@@ -19,7 +20,6 @@ public class InscripcionController : ControllerBase
         _eventoService = eventoService;
     }
     [HttpPost("registrar")]
-    [Authorize]
     public async Task<IActionResult> RegistrarInscripcion([FromBody] Inscripcion inscripcion)
     {
         // Validar el modelo
@@ -67,7 +67,7 @@ public class InscripcionController : ControllerBase
         }
     }
     [HttpPost("eventoxusuario")]
-    [Authorize]
+    
     public async Task<IActionResult> RegistrarInscEventoxUsuario([FromBody] Inscripcion inscripcion)
     {
         // Validar el modelo
@@ -117,7 +117,6 @@ public class InscripcionController : ControllerBase
 
 
     [HttpGet("usuariosinscritos/{eventoId}")]
-[Authorize]
 public async Task<IActionResult> ObtenerUsuariosInscritos(int eventoId)
 {
     // Validar si el evento existe

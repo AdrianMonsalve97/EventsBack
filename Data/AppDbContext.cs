@@ -91,7 +91,6 @@ namespace EventsApi.Data
                 entity.Property(e => e.UsuarioCreadorNombre)
                     .IsRequired()
                     .HasMaxLength(100);
-
                 entity.HasOne(e => e.UsuarioCreador)
                     .WithMany(u => u.EventosCreados)
                     .HasForeignKey(e => e.UsuarioCreadorId)

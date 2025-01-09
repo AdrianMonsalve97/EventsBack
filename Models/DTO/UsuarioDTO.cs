@@ -1,4 +1,5 @@
 using EventsApi.Models;
+using EventsApi.Models.DTO;
 public class UsuarioDto
 {
     public int Id { get; set; }
@@ -10,10 +11,3 @@ public class UsuarioDto
 }
 
 
-
-public class InscripcionDto
-{
-    public int EventoId { get; set; }
-    public string EventoNombre { get; set; }
-    public DateTime FechaInscripcion { get; set; }
-}

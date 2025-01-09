@@ -1,4 +1,5 @@
 using EventsApi.Models;
+using EventsApi.Models.DTO;
 using EventsApi.Repositorio;
 
 public interface IEventRepository : IGenericRepository<Evento>

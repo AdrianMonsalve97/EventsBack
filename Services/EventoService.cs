@@ -1,14 +1,20 @@
+using AutoMapper;
 using EventsApi.Models;
+using EventsApi.Models.DTO;
 using Microsoft.EntityFrameworkCore;
 using Models.resgeneral;
+
+namespace EventsApi.Services;
 
 public class EventoService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IMapper _mapper;
 
-    public EventoService(IEventRepository eventRepository)
+    public EventoService(IEventRepository eventRepository, IMapper mapper)
     {
         _eventRepository = eventRepository;
+        _mapper = mapper;
     }
     public async Task<RespuestaGeneral<object>> CreateEventAsync(Evento evento, int userId)
     {
@@ -114,7 +120,7 @@ public class EventoService
         IEnumerable<Evento> events = await _eventRepository.GetAvailableEventsAsync();
 
         List<Evento> filteredEvents = events
-            .Where(e => e.FechaHora.Date >= date.Date)
+            .Where(e => e.FechaHora.Value >= date.Date)
             .ToList();
 
         RespuestaGeneral<IEnumerable<Evento>> response = new RespuestaGeneral<IEnumerable<Evento>>
@@ -127,30 +133,12 @@ public class EventoService
         return response;
     }
 
-    public async Task<RespuestaGeneral<IEnumerable<Evento>>> GetFilteredEventsAsync(EventoFiltroDto filtro)
+    public async Task<IEnumerable<EventoDto>> GetFilteredEventsAsync(EventoFiltroDto filtro)
     {
-        try
-        {
-            IQueryable<Evento> query = _eventRepository.BuildQuery(filtro);
-            List<Evento> eventosFiltrados = await query.ToListAsync();
-            return new RespuestaGeneral<IEnumerable<Evento>>
-            {
-                Error = false,
-                Mensaje = eventosFiltrados.Any()
-                    ? "Eventos obtenidos con éxito."
-                    : "No se encontraron eventos.",
-                Resultado = eventosFiltrados
-            };
-        }
-        catch (Exception ex)
-        {
-            return new RespuestaGeneral<IEnumerable<Evento>>
-            {
-                Error = true,
-                Mensaje = "Ocurrió un error al obtener los eventos.",
-                Resultado = null
-            };
-        }
+        IEnumerable<Evento> eventos = await _eventRepository.GetFilteredEventsAsync(filtro);
+        IEnumerable <EventoDto> eventosDto = _mapper.Map<IEnumerable<EventoDto>>(eventos);
+
+        return eventosDto;
     }
 
     public async Task<Evento?> GetByIdAsync(int eventoId)
@@ -160,25 +148,10 @@ public class EventoService
 
     public async Task<EventoDto?> ObtenerEventoConDetallesAsync(int eventoId)
     {
-        Evento? evento = await _eventRepository.GetEventoConInscripcionesAsync(eventoId);
+        Evento? evento = await _eventRepository
+            .GetEventoConInscripcionesAsync(eventoId) ?? throw new KeyNotFoundException("El evento no existe");
 
-        if (evento == null)
-        {
-            return null;
-        }
-
-        return new EventoDto
-        {
-            Nombre = evento.Nombre,
-            UsuarioCreadorNombre = evento.UsuarioCreadorNombre,
-            AsistentesRegistrados = evento.AsistentesRegistrados,
-            FechaHora = evento.FechaHora,
-            Inscripciones = evento.Inscripciones.Select(i => new UsuarioInscritoDto
-            {
-                Nombre = i.Usuario.Nombre,
-                Correo = i.Usuario.Correo
-            }).ToList()
-        };
+        return _mapper.Map<EventoDto>(evento);
     }
 
 
