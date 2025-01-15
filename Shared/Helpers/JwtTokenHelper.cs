@@ -8,17 +8,17 @@ public class JwtTokenHelper
 
     public JwtTokenHelper(string secretKeyBase64)
     {
-        _key = Convert.FromBase64String(secretKeyBase64); // Decodifica la clave
+        _key = Convert.FromBase64String(secretKeyBase64);
     }
 
     public string GenerateToken(int userId, string role)
     {
-    var claims = new[]
-{
-    new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), // Asegúrate de incluir este claim
-    new Claim(ClaimTypes.Role, role),
-    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-};
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(ClaimTypes.Role, role),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
         var key = new SymmetricSecurityKey(_key);
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -34,3 +34,4 @@ public class JwtTokenHelper
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
+

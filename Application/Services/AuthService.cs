@@ -66,7 +66,8 @@ namespace EventsApi.Services
             }
 
             // Generar el token JWT
-            string token = _jwtHelper.GenerateToken(user.Id, EnumExtensions.GetEnumMemberValue(user.Rol));
+            string token = _jwtHelper.GenerateToken(user.Id, ((Rol)user.Rol).GetEnumMemberValue());
+
 
             return new RespuestaGeneral<string>
             {

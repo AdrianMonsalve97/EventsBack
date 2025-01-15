@@ -38,5 +38,6 @@ namespace EventsApi.Models.Enums
 
             return attribute?.Value ?? enumValue.ToString();
         }
+
     }
 }
