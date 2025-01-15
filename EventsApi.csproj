@@ -31,4 +31,10 @@
     <_ContentIncludedByDefault Remove="publish\EventsApi.staticwebassets.endpoints.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\" />
+    <Folder Include="Shared\" />
+    <Folder Include="Web\" />
+  </ItemGroup>
+
 </Project>
