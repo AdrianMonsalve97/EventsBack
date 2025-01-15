@@ -51,8 +51,8 @@ public class UsuarioService
             {
                 Id = u.Id,
                 Nombre = u.Nombre,
-                Correo = u.Correo,
-                Rol = EnumExtensions.GetEnumMemberValue(u.Rol),
+                Correo = u.CorreoCorporativo,
+                Rol = "Administrador",
                 EventosCreados = new List<EventoDto>(),
                 Inscripciones = new List<InscripcionDto>()
             };
@@ -112,7 +112,7 @@ public class UsuarioService
 
         // Actualizar los campos permitidos
         usuarioExistente.Nombre = usuarioActualizado.Nombre;
-        usuarioExistente.Correo = usuarioActualizado.Correo;
+        usuarioExistente.CorreoCorporativo = usuarioActualizado.CorreoCorporativo;
         usuarioExistente.Rol = usuarioActualizado.Rol;
         usuarioExistente.PasswordHash = usuarioActualizado.PasswordHash;
 

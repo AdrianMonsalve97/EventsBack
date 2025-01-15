@@ -1,7 +1,6 @@
-using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace EventsApi.Models.Enums
+namespace EventsApi.Domain.Enums
 {
     /// <summary>
     /// Enum de roles

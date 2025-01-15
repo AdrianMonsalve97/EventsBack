@@ -22,7 +22,7 @@ namespace EventsApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EventsApi.Models.Evento", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Evento", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,6 +49,9 @@ namespace EventsApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("Prioridad")
+                        .HasColumnType("int");
+
                     b.Property<string>("Ubicacion")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -69,7 +72,7 @@ namespace EventsApi.Migrations
                     b.ToTable("Eventos", (string)null);
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Inscripcion", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Inscripcion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,7 +100,7 @@ namespace EventsApi.Migrations
                     b.ToTable("Inscripciones", (string)null);
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Usuario", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +108,7 @@ namespace EventsApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Correo")
+                    b.Property<string>("CorreoCorporativo")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -120,19 +123,18 @@ namespace EventsApi.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Rol")
-                        .IsRequired()
+                    b.Property<int>("Rol")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios", (string)null);
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Evento", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Evento", b =>
                 {
-                    b.HasOne("EventsApi.Models.Usuario", "UsuarioCreador")
+                    b.HasOne("EventsApi.Domain.Entities.Usuario", "UsuarioCreador")
                         .WithMany("EventosCreados")
                         .HasForeignKey("UsuarioCreadorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -142,16 +144,16 @@ namespace EventsApi.Migrations
                     b.Navigation("UsuarioCreador");
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Inscripcion", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Inscripcion", b =>
                 {
-                    b.HasOne("EventsApi.Models.Evento", "Evento")
+                    b.HasOne("EventsApi.Domain.Entities.Evento", "Evento")
                         .WithMany("Inscripciones")
                         .HasForeignKey("EventoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Inscripciones_Eventos");
 
-                    b.HasOne("EventsApi.Models.Usuario", "Usuario")
+                    b.HasOne("EventsApi.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Inscripciones")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -163,12 +165,12 @@ namespace EventsApi.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Evento", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Evento", b =>
                 {
                     b.Navigation("Inscripciones");
                 });
 
-            modelBuilder.Entity("EventsApi.Models.Usuario", b =>
+            modelBuilder.Entity("EventsApi.Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("EventosCreados");
 

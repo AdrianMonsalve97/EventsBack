@@ -90,7 +90,7 @@ public class InscripcionService
         {
             Id = u.Id,
             Nombre = u.Nombre,
-            Correo = u.Correo
+            Correo = u.CorreoCorporativo
         });
     }
 

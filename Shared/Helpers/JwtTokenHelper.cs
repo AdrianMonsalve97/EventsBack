@@ -1,5 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.Serialization;
 using System.Security.Claims;
+using EventsApi.Domain.Enums;
+using EventsApi.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
 
 public class JwtTokenHelper
@@ -11,19 +14,22 @@ public class JwtTokenHelper
         _key = Convert.FromBase64String(secretKeyBase64);
     }
 
-    public string GenerateToken(int userId, string role)
+    public string GenerateToken(int userId, Rol role)
     {
-        var claims = new[]
+        // Usamos el m�todo de extensi�n para obtener el valor string del enum.
+        string roleValue = GetEnumMemberValue(role);
+
+        Claim[] claims = new Claim[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new Claim(ClaimTypes.Role, roleValue),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        var key = new SymmetricSecurityKey(_key);
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SymmetricSecurityKey key = new SymmetricSecurityKey(_key);
+        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new JwtSecurityToken(
             issuer: "EventsApi",
             audience: "EventsApi",
             claims: claims,
@@ -31,7 +37,16 @@ public class JwtTokenHelper
             signingCredentials: creds
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        return tokenHandler.WriteToken(token);
+    }
+
+    private string GetEnumMemberValue(Enum enumValue)
+    {
+        var type = enumValue.GetType();
+        var memberInfo = type.GetMember(enumValue.ToString());
+        var attributes = memberInfo[0].GetCustomAttributes(typeof(EnumMemberAttribute), false);
+        return (attributes.Length > 0) ? ((EnumMemberAttribute)attributes[0]).Value : enumValue.ToString();
     }
 }
 

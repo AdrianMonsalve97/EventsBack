@@ -7,7 +7,7 @@ using Models.resgeneral;
 namespace EventsApi.Controllers
 {
     [ApiController]
-    [Route("4uth/[controller]")]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;

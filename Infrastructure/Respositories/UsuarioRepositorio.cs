@@ -14,7 +14,7 @@ namespace EventsApi.Repositorio
         // Método específico para buscar por correo
         public async Task<Usuario?> GetByEmailAsync(string email)
         {
-            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == email);
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.CorreoCorporativo == email);
         }
 
         public async Task<Usuario?> GetUsuarioByIdAsync(int userId)

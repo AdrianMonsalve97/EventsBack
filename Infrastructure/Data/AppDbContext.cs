@@ -33,7 +33,7 @@ namespace EventsApi.Data
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Correo)
+                entity.Property(e => e.CorreoCorporativo)
                     .IsRequired()
                     .HasMaxLength(100);
 

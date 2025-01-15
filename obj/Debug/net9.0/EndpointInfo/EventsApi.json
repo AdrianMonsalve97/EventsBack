@@ -409,6 +409,9 @@
   "components": {
     "schemas": {
       "Evento": {
+        "required": [
+          "prioridad"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -444,6 +447,9 @@
           "asistentesRegistrados": {
             "type": "integer",
             "format": "int32"
+          },
+          "prioridad": {
+            "$ref": "#/components/schemas/Prioridad"
           },
           "usuarioCreadorId": {
             "type": "integer",
@@ -533,6 +539,29 @@
         },
         "additionalProperties": false
       },
+      "Prioridad": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Rol": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "Usuario": {
         "required": [
           "correo",
@@ -548,20 +577,21 @@
             "format": "int32"
           },
           "nombre": {
+            "maxLength": 100,
             "minLength": 1,
             "type": "string"
           },
           "correo": {
             "minLength": 1,
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "passwordHash": {
-            "minLength": 1,
+            "minLength": 8,
             "type": "string"
           },
           "rol": {
-            "minLength": 1,
-            "type": "string"
+            "$ref": "#/components/schemas/Rol"
           },
           "eventosCreados": {
             "type": "array",
@@ -580,6 +610,19 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Por favor inserte el jwt despues de la palabra bearer de esta forma \"<strong>bearer {JWT}</strong>\"",
+        "name": "Authorization",
+        "in": "header"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

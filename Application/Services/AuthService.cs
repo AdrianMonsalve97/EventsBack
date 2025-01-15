@@ -6,6 +6,7 @@ using Models.resgeneral;
 using System.Security.Cryptography;
 using System.Text;
 using EventsApi.Domain.Entities;
+using EventsApi.Domain.Enums;
 using EventsApi.Models.Enums;
 
 namespace EventsApi.Services
@@ -31,7 +32,7 @@ namespace EventsApi.Services
             }
 
             // Verificar si el correo ya está registrado
-            if (await IsEmailRegistered(usuario.Correo))
+            if (await IsEmailRegistered(usuario.CorreoCorporativo))
             {
                 return CreateErrorResponse<object>("El correo ya está registrado.");
             }
@@ -53,21 +54,38 @@ namespace EventsApi.Services
 
         public async Task<RespuestaGeneral<string>> LoginAsync(LoginDto loginDto)
         {
-            var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == loginDto.Correo);
+            // Buscar al usuario por correo
+            Usuario user = await _context.Usuarios.FirstOrDefaultAsync(u => u.CorreoCorporativo == loginDto.Correo);
 
             if (user == null)
             {
-                return CreateErrorResponse<string>("Correo no registrado.");
+                return CreateErrorResponse<string>("CorreoCorporativo no registrado.");
             }
 
+            // Verificar si la contraseña es correcta
             if (user.PasswordHash != HashPassword(loginDto.Password))
             {
                 return CreateErrorResponse<string>("Contraseña incorrecta.");
             }
 
-            // Generar el token JWT
-            string token = _jwtHelper.GenerateToken(user.Id, ((Rol)user.Rol).GetEnumMemberValue());
+            // Validar y convertir el rol
+            Rol userRole;
 
+            // Si el rol está almacenado como un entero en la base de datos, lo convertimos directamente
+            if (Enum.IsDefined(typeof(Rol), user.Rol))
+            {
+                userRole = (Rol)user.Rol;
+            }
+            else
+            {
+                return CreateErrorResponse<string>("Rol del usuario no es válido.");
+            }
+
+            // Convertir el rol a string utilizando el valor definido en EnumMember
+            string roleValue = EnumExtensions.GetEnumMemberValue(userRole);
+
+            // Generar el token JWT
+            string token = _jwtHelper.GenerateToken(user.Id, userRole);
 
             return new RespuestaGeneral<string>
             {
@@ -76,6 +94,7 @@ namespace EventsApi.Services
                 Resultado = token
             };
         }
+
 
         private (bool IsValid, string ErrorMessage) ValidatePassword(string password)
         {
@@ -89,7 +108,7 @@ namespace EventsApi.Services
 
         private async Task<bool> IsEmailRegistered(string email)
         {
-            return await _context.Usuarios.AnyAsync(u => u.Correo == email);
+            return await _context.Usuarios.AnyAsync(u => u.CorreoCorporativo == email);
         }
 
         private string HashPassword(string password)

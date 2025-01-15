@@ -14,7 +14,7 @@ namespace EventsApi.Profiles
                 .ForMember(dest => dest.Nombre,
                     opt => opt.MapFrom(src => src.Usuario.Nombre))
                 .ForMember(dest => dest.Correo,
-                    opt => opt.MapFrom(src => src.Usuario.Correo));
+                    opt => opt.MapFrom(src => src.Usuario.CorreoCorporativo));
 
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<Inscripcion, InscripcionDto>()
