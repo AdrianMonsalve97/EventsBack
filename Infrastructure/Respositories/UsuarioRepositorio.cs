@@ -1,4 +1,5 @@
 using EventsApi.Data;
+using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using Microsoft.EntityFrameworkCore;
 

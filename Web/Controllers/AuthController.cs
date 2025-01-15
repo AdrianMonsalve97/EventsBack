@@ -1,3 +1,4 @@
+using EventsApi.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using EventsApi.Services;
 using EventsApi.Models;

@@ -1,4 +1,6 @@
-﻿namespace EventsApi.Models.DTO
+﻿using EventsApi.Domain.Entities;
+
+namespace EventsApi.Models.DTO
 {
     public class EventoDto
     {

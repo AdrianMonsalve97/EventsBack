@@ -1,3 +1,4 @@
+using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using EventsApi.Models.DTO;
 using EventsApi.Repositorio;

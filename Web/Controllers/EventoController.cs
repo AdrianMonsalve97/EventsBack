@@ -6,6 +6,7 @@ using Models.resgeneral;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using EventsApi.Domain.Entities;
 using EventsApi.Models.DTO;
 
 namespace EventsApi.Controllers

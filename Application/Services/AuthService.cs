@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Models.resgeneral;
 using System.Security.Cryptography;
 using System.Text;
+using EventsApi.Domain.Entities;
+using EventsApi.Models.Enums;
 
 namespace EventsApi.Services
 {
@@ -22,26 +24,16 @@ namespace EventsApi.Services
         public async Task<RespuestaGeneral<object>> RegisterAsync(Usuario usuario)
         {
             // Validar la contraseña
-            if (!PasswordValidator.IsValid(usuario.PasswordHash, out string errorMessage))
+            var passwordValidation = ValidatePassword(usuario.PasswordHash);
+            if (!passwordValidation.IsValid)
             {
-                return new RespuestaGeneral<object>
-                {
-                    Error = true,
-                    Mensaje = errorMessage,
-                    Resultado = null
-                };
+                return CreateErrorResponse<object>(passwordValidation.ErrorMessage);
             }
 
             // Verificar si el correo ya está registrado
-            bool correoExiste = await _context.Usuarios.AnyAsync(u => u.Correo == usuario.Correo);
-            if (correoExiste)
+            if (await IsEmailRegistered(usuario.Correo))
             {
-                return new RespuestaGeneral<object>
-                {
-                    Error = true,
-                    Mensaje = "El correo ya está registrado.",
-                    Resultado = null
-                };
+                return CreateErrorResponse<object>("El correo ya está registrado.");
             }
 
             // Encriptar la contraseña
@@ -59,32 +51,22 @@ namespace EventsApi.Services
             };
         }
 
-
         public async Task<RespuestaGeneral<string>> LoginAsync(LoginDto loginDto)
         {
-            Usuario? user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == loginDto.Correo);
+            var user = await _context.Usuarios.FirstOrDefaultAsync(u => u.Correo == loginDto.Correo);
 
             if (user == null)
             {
-                return new RespuestaGeneral<string>
-                {
-                    Error = true,
-                    Mensaje = "Correo no registrado.",
-                    Resultado = null
-                };
+                return CreateErrorResponse<string>("Correo no registrado.");
             }
 
             if (user.PasswordHash != HashPassword(loginDto.Password))
             {
-                return new RespuestaGeneral<string>
-                {
-                    Error = true,
-                    Mensaje = "Contraseña incorrecta.",
-                    Resultado = null
-                };
+                return CreateErrorResponse<string>("Contraseña incorrecta.");
             }
 
-            string token = _jwtHelper.GenerateToken(user.Id, user.Rol);
+            // Generar el token JWT
+            string token = _jwtHelper.GenerateToken(user.Id, EnumExtensions.GetEnumMemberValue(user.Rol));
 
             return new RespuestaGeneral<string>
             {
@@ -94,6 +76,21 @@ namespace EventsApi.Services
             };
         }
 
+        private (bool IsValid, string ErrorMessage) ValidatePassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return (false, "La contraseña no puede ser nula o vacía.");
+            }
+
+            return PasswordValidator.IsValid(password, out string errorMessage) ? (true, string.Empty) : (false, errorMessage);
+        }
+
+        private async Task<bool> IsEmailRegistered(string email)
+        {
+            return await _context.Usuarios.AnyAsync(u => u.Correo == email);
+        }
+
         private string HashPassword(string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -101,9 +98,19 @@ namespace EventsApi.Services
                 throw new ArgumentException("La contraseña no puede ser nula o vacía.", nameof(password));
             }
 
-            using System.Security.Cryptography.SHA256 sha256 = SHA256.Create();
+            using var sha256 = SHA256.Create();
             byte[] hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(hashedBytes);
+        }
+
+        private RespuestaGeneral<T> CreateErrorResponse<T>(string errorMessage)
+        {
+            return new RespuestaGeneral<T>
+            {
+                Error = true,
+                Mensaje = errorMessage,
+                Resultado = default
+            };
         }
     }
 }

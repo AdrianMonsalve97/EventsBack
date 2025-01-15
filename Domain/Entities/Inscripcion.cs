@@ -1,7 +1,4 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace EventsApi.Models
+namespace EventsApi.Domain.Entities
 {
     public class Inscripcion
     {

@@ -1,5 +1,7 @@
+using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using EventsApi.Models.DTO;
+using EventsApi.Models.Enums;
 using EventsApi.Repositorio;
 using Models.resgeneral;
 
@@ -38,30 +40,52 @@ public class UsuarioService
 
     public async Task<RespuestaGeneral<IEnumerable<UsuarioDto>>> ObtenerListaUsuariosAsync()
     {
+        // Obtención de todos los usuarios
         IEnumerable<Usuario> usuarios = await _usuarioRepository.ObtenerTodosLosUsuariosAsync();
 
-        var usuariosDto = usuarios.Select(u => new UsuarioDto
+        // Conversión de usuarios a DTOs
+        List<UsuarioDto> usuariosDto = new List<UsuarioDto>();
+        foreach (Usuario u in usuarios)
         {
-            Id = u.Id,
-            Nombre = u.Nombre,
-            Correo = u.Correo,
-            Rol = u.Rol,
-            EventosCreados = u.EventosCreados.Select(e => new EventoDto
+            UsuarioDto usuarioDto = new UsuarioDto
             {
-                Id = e.Id,
-                Nombre = e.Nombre,
-                FechaHora = e.FechaHora,
-                Ubicacion = e.Ubicacion,
-                CapacidadMaxima = e.CapacidadMaxima,
-                AsistentesRegistrados = e.AsistentesRegistrados
-            }).ToList(),
-            Inscripciones = u.Inscripciones.Select(i => new InscripcionDto
+                Id = u.Id,
+                Nombre = u.Nombre,
+                Correo = u.Correo,
+                Rol = EnumExtensions.GetEnumMemberValue(u.Rol),
+                EventosCreados = new List<EventoDto>(),
+                Inscripciones = new List<InscripcionDto>()
+            };
+
+            // Convertir eventos creados a DTOs
+            foreach (Evento e in u.EventosCreados)
             {
-                EventoId = i.EventoId,
-                EventoNombre = i.Evento.Nombre,
-                FechaInscripcion = i.FechaInscripcion
-            }).ToList()
-        });
+                EventoDto eventoDto = new EventoDto
+                {
+                    Id = e.Id,
+                    Nombre = e.Nombre,
+                    FechaHora = e.FechaHora,
+                    Ubicacion = e.Ubicacion,
+                    CapacidadMaxima = e.CapacidadMaxima,
+                    AsistentesRegistrados = e.AsistentesRegistrados
+                };
+                usuarioDto.EventosCreados.Add(eventoDto);
+            }
+
+            // Convertir inscripciones a DTOs
+            foreach (Inscripcion i in u.Inscripciones)
+            {
+                InscripcionDto inscripcionDto = new InscripcionDto
+                {
+                    EventoId = i.EventoId,
+                    EventoNombre = i.Evento.Nombre,
+                    FechaInscripcion = i.FechaInscripcion
+                };
+                usuarioDto.Inscripciones.Add(inscripcionDto);
+            }
+
+            usuariosDto.Add(usuarioDto);
+        }
 
         return new RespuestaGeneral<IEnumerable<UsuarioDto>>
         {
@@ -70,8 +94,6 @@ public class UsuarioService
             Resultado = usuariosDto
         };
     }
-
-
 
     // Actualizar un usuario
     public async Task<RespuestaGeneral<object>> ActualizarUsuarioAsync(int id, Usuario usuarioActualizado)

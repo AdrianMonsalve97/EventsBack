@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using EventsApi.Models.DTO;
 
