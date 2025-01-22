@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using EventsApi.Application.DTO;
 using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ public class UsuarioController : ControllerBase
             });
         }
 
-        RespuestaGeneral<IEnumerable<UsuarioDto>> respuesta = await _usuarioService.ObtenerListaUsuariosAsync();
+        RespuestaGeneral<List<UsuarioDto>> respuesta = await _usuarioService.ObtenerTodosLosUsuariosAsync();
 
         if (respuesta.Error)
         {

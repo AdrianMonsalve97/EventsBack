@@ -5,7 +5,7 @@ namespace EventsApi.Models
     public class LoginDto
     {
         [Required]
-        public string Correo { get; set; } = null!;
+        public string CorreoCorporativo { get; set; } = null!;
         [Required]
         public string Password { get; set; } = null!;
     }

@@ -12,8 +12,6 @@ namespace EventsApi.Domain.Entities
         public string NombreProveedor { get; set; } = null!;
         [Required (ErrorMessage = "El Tipo de documento del proveedor es obligatorio")]
         public TipoDocumento TipoDocumento { get; set; } = TipoDocumento.NIT;
-
-        
     }
 }
 

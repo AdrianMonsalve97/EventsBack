@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventsApi.Application.DTO;
 using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using EventsApi.Models.DTO;
@@ -13,7 +14,7 @@ namespace EventsApi.Profiles
             CreateMap<Inscripcion, UsuarioInscritoDto>()
                 .ForMember(dest => dest.Nombre,
                     opt => opt.MapFrom(src => src.Usuario.Nombre))
-                .ForMember(dest => dest.Correo,
+                .ForMember(dest => dest.CorreoCorporativo,
                     opt => opt.MapFrom(src => src.Usuario.CorreoCorporativo));
 
             CreateMap<Usuario, UsuarioDto>();

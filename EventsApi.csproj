@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Domain\" />
-    <Folder Include="Infrastructure\Data\Semilla\" />
+    <Folder Include="Infrastructure\Data\Migrations\" />
     <Folder Include="Shared\" />
     <Folder Include="Web\" />
   </ItemGroup>

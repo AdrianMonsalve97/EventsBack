@@ -4,6 +4,7 @@ using EventsApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventsApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250122204126_FirstMigration")]
+    partial class FirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,39 @@ namespace EventsApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EventsApi.Domain.Entities.Empresa", b =>
+                {
+                    b.Property<string>("IndentificacionEmpresa")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("IdentificacionEmpresa");
+
+                    b.Property<string>("NombreContactoEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("NombreContactoEmpresa");
+
+                    b.Property<string>("NombreEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("NombreEmpresa");
+
+                    b.Property<string>("NumeroContatoEmpresa")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnName("NumeroContatoEmpresa");
+
+                    b.Property<int>("TipoDocumento")
+                        .HasColumnType("int");
+
+                    b.HasKey("IndentificacionEmpresa");
+
+                    b.ToTable("Empresas", (string)null);
+                });
 
             modelBuilder.Entity("EventsApi.Domain.Entities.Evento", b =>
                 {
@@ -31,7 +67,9 @@ namespace EventsApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AsistentesRegistrados")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("CapacidadMaxima")
                         .HasColumnType("int");
@@ -41,7 +79,7 @@ namespace EventsApi.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime>("FechaHora")
+                    b.Property<DateTime?>("FechaHora")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
@@ -61,9 +99,7 @@ namespace EventsApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UsuarioCreadorNombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -100,6 +136,27 @@ namespace EventsApi.Migrations
                     b.ToTable("Inscripciones", (string)null);
                 });
 
+            modelBuilder.Entity("EventsApi.Domain.Entities.Proveedor", b =>
+                {
+                    b.Property<string>("IdentificacionProveedor")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("IdentificacionProveedor");
+
+                    b.Property<string>("NombreProveedor")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("NombreProveedor");
+
+                    b.Property<int>("TipoDocumento")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdentificacionProveedor");
+
+                    b.ToTable("Proveedores", (string)null);
+                });
+
             modelBuilder.Entity("EventsApi.Domain.Entities.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -108,10 +165,33 @@ namespace EventsApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<long>("CelularCorporativo")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CelularPersonal")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("CorreoCorporativo")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CorreoPersonal")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long>("DocumentoIdentidad")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("EmpresaIndentificacionEmpresa")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("FechaContratoFin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaContratoInicio")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -127,7 +207,12 @@ namespace EventsApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("int");
 
+                    b.Property<int>("TipoDocumento")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("EmpresaIndentificacionEmpresa");
 
                     b.ToTable("Usuarios", (string)null);
                 });
@@ -139,7 +224,38 @@ namespace EventsApi.Migrations
                         .HasForeignKey("UsuarioCreadorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_Usuarios_Eventos");
+                        .HasConstraintName("FK_Eventos_Usuarios");
+
+                    b.OwnsOne("EventsApi.Domain.Entities.FechasEventos", "Fechas", b1 =>
+                        {
+                            b1.Property<int>("EventoId")
+                                .HasColumnType("int");
+
+                            b1.Property<DateTime>("FechaAprovacion")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("FechaAsignacion")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("FechaCotizacion")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("FechaFin")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("FechaInicio")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("EventoId");
+
+                            b1.ToTable("Eventos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EventoId");
+                        });
+
+                    b.Navigation("Fechas")
+                        .IsRequired();
 
                     b.Navigation("UsuarioCreador");
                 });
@@ -163,6 +279,15 @@ namespace EventsApi.Migrations
                     b.Navigation("Evento");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("EventsApi.Domain.Entities.Usuario", b =>
+                {
+                    b.HasOne("EventsApi.Domain.Entities.Empresa", "Empresa")
+                        .WithMany()
+                        .HasForeignKey("EmpresaIndentificacionEmpresa");
+
+                    b.Navigation("Empresa");
                 });
 
             modelBuilder.Entity("EventsApi.Domain.Entities.Evento", b =>

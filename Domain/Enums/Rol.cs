@@ -21,6 +21,10 @@ namespace EventsApi.Domain.Enums
 
         [EnumMember(Value = "Logistico")]
         Logistico = 5,
+        
+        [EnumMember(Value = "Ejecutivo")]
+        Ejecutivo = 6,
+        
     }
 
     /// <summary>

@@ -6,9 +6,6 @@ using EventsApi.Models.Enums;
 
 namespace EventsApi.Domain.Entities
 {
-    /// <summary>
-    /// Representa un evento en el sistema.
-    /// </summary>
     public class Evento
     {
         public int Id { get; set; }
@@ -28,8 +25,12 @@ namespace EventsApi.Domain.Entities
         public int CapacidadMaxima { get; set; }
 
         public int AsistentesRegistrados { get; set; } = 0;
+
         [Required(ErrorMessage = "La prioridad es obligatoria.")]
         public Prioridad Prioridad { get; set; } = Prioridad.NoUrgente;
+
+        // Fechas agrupadas
+        public FechasEventos Fechas { get; set; } = new FechasEventos();
 
         // Relaciones
         public int UsuarioCreadorId { get; set; }
@@ -46,10 +47,7 @@ namespace EventsApi.Domain.Entities
 
         public bool TieneCupo() => AsistentesRegistrados < CapacidadMaxima;
     }
-
-    /// <summary>
-    /// Representa un conjunto de fechas asociadas a un evento.
-    /// </summary>
+    
     public class FechasEventos
     {
         public DateTime FechaInicio { get; set; }
