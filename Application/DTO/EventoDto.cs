@@ -8,6 +8,7 @@ namespace EventsApi.Models.DTO
         public string? UsuarioCreadorNombre { get; set; }
         public string? Ubicacion { get; set; }
         public int? CapacidadMaxima { get; set; }
+        public string? Descripcion { get; set; }
         public int? AsistentesRegistrados { get; set; }
         public DateTime? FechaHora { get; set; }
         public string? NumeroEvento { get; set; }

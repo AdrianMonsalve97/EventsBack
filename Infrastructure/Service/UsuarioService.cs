@@ -44,7 +44,7 @@ public class UsuarioService
             return new RespuestaGeneral<List<UsuarioDto>>
             {
                 Error = false,
-                Mensaje = "Usuarios obtenidos con éxito.",
+                Mensaje = "Usuarios obtenidos con éxito.", 
                 Resultado = usuariosDto
             };
         }
@@ -131,30 +131,4 @@ public class UsuarioService
         }
     }
 
-    // Método privado para convertir un Usuario a UsuarioDto
-    private UsuarioInscritoDto ConvertirUsuarioADto(Usuario usuario)
-    {
-        return new UsuarioInscritoDto
-        {
-            Id = usuario.Id,
-            Nombre = usuario.Nombre,
-            CorreoCorporativo = usuario.CorreoCorporativo,
-            Rol = usuario.Rol.ToString(),
-            EventosCreados = usuario.EventosCreados.Select(e => new EventoDto
-            {
-                Id = e.Id,
-                Nombre = e.Nombre,
-                FechaHora = e.FechaHora,
-                Ubicacion = e.Ubicacion,
-                CapacidadMaxima = e.CapacidadMaxima,
-                AsistentesRegistrados = e.AsistentesRegistrados
-            }).ToList(),
-            Inscripciones = usuario.Inscripciones.Select(i => new InscripcionDto
-            {
-                EventoId = i.EventoId,
-                EventoNombre = i.Evento.Nombre,
-                FechaInscripcion = i.FechaInscripcion
-            }).ToList()
-        };
-    }
 }

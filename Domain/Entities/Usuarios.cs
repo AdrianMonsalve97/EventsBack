@@ -32,7 +32,7 @@ namespace EventsApi.Domain.Entities
         public string CorreoPersonal { get; set; } = null!;
 
         [Required, MinLength(8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres.")]
-        public string PasswordHash { get; set; } = null!; // Contraseña encriptada
+        public string PasswordHash { get; set; } = null!; 
 
         [Required(ErrorMessage = "El rol es obligatorio.")]
         public Rol Rol { get; set; } = Rol.Usuario;
