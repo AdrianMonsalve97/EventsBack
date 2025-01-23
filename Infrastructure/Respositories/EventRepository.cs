@@ -25,6 +25,9 @@ public class EventRepository : GenericRepository<Evento>, IEventRepository
         {
             query = query.Where(e => e.Ubicacion.Contains(filtro.Ubicacion));
         }
+        if (!string.IsNullOrEmpty(filtro.Descripcion)) {
+            query = query.Where(e => e.Descripcion.Contains(filtro.Descripcion));
+        }
 
         if (filtro.FechaHora.HasValue)
         {
