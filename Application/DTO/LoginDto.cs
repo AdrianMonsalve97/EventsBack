@@ -8,5 +8,7 @@ namespace EventsApi.Models
         public string CorreoCorporativo { get; set; } = null!;
         [Required]
         public string Password { get; set; } = null!;
+
+        
     }
 }

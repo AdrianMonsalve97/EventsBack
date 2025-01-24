@@ -131,7 +131,6 @@ public async Task<IActionResult> ObtenerUsuariosInscritos(int eventoId)
         });
     }
 
-    // Obtener los usuarios inscritos
     IEnumerable<UsuarioInscritoDto> usuarios = await _inscripcionService.ObtenerUsuariosInscritosAsync(eventoId);
 
     if (!usuarios.Any())
@@ -151,6 +150,35 @@ public async Task<IActionResult> ObtenerUsuariosInscritos(int eventoId)
         Resultado = usuarios
     });
 }
+    [HttpGet("inscripciones/usuario/{usuarioId}")]
+    public async Task<IActionResult> ObtenerInscripcionesPorUsuario(int usuarioId)
+    {
+        try
+        { RespuestaGeneral<IEnumerable<Evento>> respuestaEventos = await _inscripcionService.ObtenerEventosDisponiblesAsync(usuarioId);
+            if (respuestaEventos.Error || respuestaEventos.Resultado == null || !respuestaEventos.Resultado.Any())
+            {
+                return NotFound(new
+                {
+                    Error = true,
+                    Mensaje = "No se encontraron inscripciones para el usuario."
+                });
+            }
 
-
+            return Ok(new
+            {
+                Error = false,
+                Mensaje = "Inscripciones obtenidas con éxito.",
+                Resultado = respuestaEventos.Resultado
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                Error = true,
+                Mensaje = "Ocurrió un error interno en el servidor.",
+                Detalles = ex.Message
+            });
+        }
+    }
 }

@@ -9,4 +9,5 @@ public interface IInscriptionRepository : IGenericRepository<Inscripcion>
     Task<IEnumerable<Inscripcion>> ObtenerPorEventoAsync(int eventoId);
     Task<List<Usuario>> GetUsuariosInscritosAsync(int eventoId);
     Task<int> CountUserInscripcionesAsync(int usuarioId);
+    Task<IEnumerable<Inscripcion>> GetInscripcionesByUsuarioAsync(int usuarioId); 
 }

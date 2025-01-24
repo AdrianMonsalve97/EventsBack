@@ -30,8 +30,8 @@ public class UsuarioService
                     Nombre = u.Nombre,
                     CorreoCorporativo = u.CorreoCorporativo,
                     CorreoPersonal = u.CorreoPersonal,
-                    Rol = u.Rol.ToString(),
-                    TipoDocumento = u.TipoDocumento.ToString(),
+                    Rol = u.Rol, 
+                    TipoDocumento = u.TipoDocumento, 
                     DocumentoIdentidad = u.DocumentoIdentidad,
                     CelularPersonal = u.CelularPersonal,
                     CelularCorporativo = u.CelularCorporativo,
@@ -39,6 +39,7 @@ public class UsuarioService
                     FechaContratoFin = u.FechaContratoFin.HasValue ? u.FechaContratoFin.Value : default(DateTime),
                     NombreEmpresa = u.Empresa?.NombreEmpresa
                 };
+
             }).ToList();
 
             return new RespuestaGeneral<List<UsuarioDto>>

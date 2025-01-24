@@ -1,4 +1,6 @@
+using EventsApi.Application.DTO;
 using EventsApi.Domain.Entities;
+using EventsApi.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using EventsApi.Services;
 using EventsApi.Models;
@@ -18,17 +20,26 @@ namespace EventsApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] Usuario usuario)
+        public async Task<IActionResult> Register([FromBody] UsuarioDto usuarioDto)
         {
-            RespuestaGeneral<object> response = await _authService.RegisterAsync(usuario);
-            return Ok(response);
+            RespuestaGeneral<object> result = await _authService.Register(usuarioDto);
+            return Ok(result);  
         }
+
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            RespuestaGeneral<string> response = await _authService.LoginAsync(loginDto);
-            return Ok(response);
+            RespuestaGeneral<LoginResponseDto> response = await _authService.LoginAsync(loginDto);
+    
+            if (response.Error)
+            {
+                return BadRequest(response); 
+            }
+
+            return Ok(response); 
         }
+
     }
 }

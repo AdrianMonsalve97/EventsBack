@@ -2,6 +2,8 @@ using EventsApi.Domain.Entities;
 using EventsApi.Models;
 using EventsApi.Repositorio;
 using Models.resgeneral;
+using System.Linq;
+
 
 public class InscripcionService
 {
@@ -15,6 +17,8 @@ public class InscripcionService
         _eventRepository = eventRepository;
         _usuarioRepository = usuarioRepository;
     }
+
+    // Método para registrar la inscripción de un usuario en un evento
     public async Task<RespuestaGeneral<object>> RegistrarInscripcionAsync(int usuarioId, int eventoId)
     {
         // Obtener el evento
@@ -28,6 +32,8 @@ public class InscripcionService
                 Resultado = null
             };
         }
+
+        // Validar si el usuario es el creador del evento
         if (evento.UsuarioCreadorId == usuarioId)
         {
             return new RespuestaGeneral<object>
@@ -37,6 +43,8 @@ public class InscripcionService
                 Resultado = null
             };
         }
+
+        // Limitar a un máximo de 3 inscripciones por usuario
         int inscripcionesActuales = await _inscripcionRepository.CountUserInscripcionesAsync(usuarioId);
         if (inscripcionesActuales >= 3)
         {
@@ -81,6 +89,7 @@ public class InscripcionService
         };
     }
 
+    // Método para obtener los usuarios inscritos en un evento
     public async Task<IEnumerable<UsuarioInscritoDto>> ObtenerUsuariosInscritosAsync(int eventoId)
     {
         List<Usuario> usuarios = await _inscripcionRepository.GetUsuariosInscritosAsync(eventoId);
@@ -94,5 +103,38 @@ public class InscripcionService
         });
     }
 
+    // **Nuevo Método para Obtener los Eventos Disponibles para un Usuario**
+    public async Task<RespuestaGeneral<IEnumerable<Evento>>> ObtenerEventosDisponiblesAsync(int usuarioId)
+    {
+        try
+        {
+            // Obtener todos los eventos
+            IEnumerable<Evento> eventos = await _eventRepository.GetAllAsync();
+
+            // Obtener las inscripciones del usuario (solo los EventId)
+            IEnumerable<int> inscripcionesEventoIds = (await _inscripcionRepository
+                    .GetInscripcionesByUsuarioAsync(usuarioId))
+                .Select(i => i.EventoId) // Aquí es donde usamos Select
+                .ToHashSet(); // Utilizamos HashSet para optimizar la búsqueda
+
+            // Filtrar los eventos para excluir los que ya están inscritos
+            var eventosDisponibles = eventos.Where(e => !inscripcionesEventoIds.Contains(e.Id)).ToList();
+
+            return new RespuestaGeneral<IEnumerable<Evento>>
+            {
+                Error = false,
+                Mensaje = "Eventos disponibles.",
+                Resultado = eventosDisponibles
+            };
+        }
+        catch (Exception ex)
+        {
+            return new RespuestaGeneral<IEnumerable<Evento>>
+            {
+                Error = true,
+                Mensaje = ex.Message,
+            };
+        }
+    }
 
 }

@@ -21,7 +21,6 @@ namespace EventsApi.Domain.Entities
         [MaxLength(200, ErrorMessage = "La ubicación no puede exceder los 200 caracteres.")]
         public string Ubicacion { get; set; } = string.Empty;
 
-        [Range(1, 40, ErrorMessage = "La capacidad debe estar entre 1 y 40 asistentes.")]
         public int CapacidadMaxima { get; set; }
 
         public int AsistentesRegistrados { get; set; } = 0;

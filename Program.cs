@@ -1,9 +1,11 @@
+using System.Text.Json;
 using EventsApi.Data;
 using EventsApi.Middleware;
 using EventsApi.Repositorio;
 using EventsApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -26,6 +28,7 @@ builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IInscriptionRepository, InscripcionRepository>();
 builder.Services.AddScoped<InscripcionService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<PasswordService>();
 
 // Configurar JwtTokenHelper como singleton
 builder.Services.AddSingleton<JwtTokenHelper>(provider =>
@@ -92,6 +95,12 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
 
 // Configuración de autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

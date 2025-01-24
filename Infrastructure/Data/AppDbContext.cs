@@ -70,6 +70,10 @@ namespace EventsApi.Data
                 entity.Property(e => e.FechaContratoInicio);
 
                 entity.Property(e => e.FechaContratoFin);
+                
+                entity.Property(e => e.PasswordSalt)
+                    .IsRequired()
+                    .HasMaxLength(255); 
 
                 // Relaciones
                 entity.HasMany(u => u.EventosCreados)

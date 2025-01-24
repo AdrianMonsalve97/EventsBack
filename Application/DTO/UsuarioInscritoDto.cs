@@ -1,3 +1,4 @@
+
 using EventsApi.Models.DTO;
 
 namespace EventsApi.Domain.Entities

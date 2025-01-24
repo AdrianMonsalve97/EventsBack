@@ -184,10 +184,16 @@ namespace EventsApi.Migrations
                     b.Property<string>("EmpresaIndentificacionEmpresa")
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<DateTime>("FechaActualizacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("FechaContratoFin")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("FechaContratoInicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Nombre")
@@ -196,6 +202,11 @@ namespace EventsApi.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PasswordSalt")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");

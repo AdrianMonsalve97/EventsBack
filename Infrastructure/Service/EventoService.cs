@@ -19,6 +19,17 @@ public class EventoService
     }
     public async Task<RespuestaGeneral<object>> CreateEventAsync(Evento evento, int userId)
     {
+        // Validar capacidad máxima
+        if (evento.CapacidadMaxima > 40)
+        {
+            return new RespuestaGeneral<object>
+            {
+                Error = true,
+                Mensaje = "La capacidad máxima no puede superar los 40 asistentes.",
+                Resultado = null
+            };
+        }
+
         // Buscar al usuario en la base de datos
         Usuario? usuario = await _eventRepository.GetUsuarioByIdAsync(userId); // Método en repositorio para obtener usuario
         if (usuario == null)

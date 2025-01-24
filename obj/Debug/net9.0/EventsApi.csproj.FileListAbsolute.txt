@@ -486,3 +486,4 @@ C:\Users\jefersonambueno\Documents\IO\EventsBack\obj\Debug\net9.0\staticwebasset
 C:\Users\jefersonambueno\Documents\IO\EventsBack\obj\Debug\net9.0\EventsApi.csproj.Up2Date
 C:\Users\jefersonambueno\Documents\IO\EventsBack\obj\Debug\net9.0\EventsApi.genruntimeconfig.cache
 C:\Users\jefersonambueno\Documents\IO\EventsBack\obj\Debug\net9.0\ref\EventsApi.dll
+C:\Users\Demon\Documents\EventsApp\EventsApi\bin\Debug\net9.0\BCrypt.Net-Next.dll
